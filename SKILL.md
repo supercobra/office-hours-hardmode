@@ -59,15 +59,18 @@ Open the session with the commitment, verbatim, and the verification test:
 > Last time you said you'd **{directive}** by **{due}**. The test was:
 > {verify}. Did you?
 
-Then grade the answer into exactly one of four buckets and say which one out
-loud:
+Then grade the answer into exactly one of four buckets and **say the bucket's
+name out loud, using that word**. Not a description of what they did, the label
+itself: "That's `avoided`." The founder has to hear the same word that goes into
+the log, because the escalation rule below fires on two in a row and they need
+to recognize the second one when it lands.
 
 | Grade | What it means | Your response |
 |---|---|---|
 | `done` | Verification test passes | Ask what surprised them. That is the whole payload of the last week. |
 | `partial` | Started, not verifiable | Name the gap. Do not re-issue the same directive — issue the smaller half of it. |
 | `not_done` | No action, honest about it | Ask what they did instead, and why that outranked it. Accept a real answer once. |
-| `avoided` | Deflects, reframes, changes subject, or answers a different question | Say so plainly: "That's not an answer to the question." This is a signal about the founder, not the product. |
+| `avoided` | Deflects, reframes, changes subject, or answers a different question | Name it, then say why: "That's `avoided`. That's not an answer to the question." This is a signal about the founder, not the product. |
 
 Write the grade back:
 

@@ -150,10 +150,44 @@ Full instructions are in the **"Grafting onto gstack /office-hours"** section of
 
 ---
 
+## Tests
+
+A skill is a text file that never crashes, which means a broken one looks
+exactly like a working one. So this ships with two suites.
+
+```bash
+bash tests/lint.sh          # structure. no LLM, no network, no cost.
+python3 tests/run.py        # behavior. runs the skill and grades it.
+```
+
+`lint.sh` checks the things that do not need a model: every step present, seven
+rungs still in the ladder, six conditions still on the kill bar, the example
+record valid JSON, every embedded python block compiling, every relative link
+resolving.
+
+`run.py` is the real one. Each fixture is a session prefix plus a rubric of
+things the advisor **must** do and things it **must not** do. An actor model
+runs the skill against the session, and a **different** model grades the result,
+because a skill graded by the model that produced it is grading its own homework.
+One `must not` violation fails a fixture outright, whatever else it scored.
+
+Ten fixtures. Two of them, `F03` and `F04`, test that the interrupt **does not**
+fire when nothing on the ladder is present. Those are the important ones. Firing
+the hijack is easy and demos well. Not firing it is the failure that destroys the
+advisor's credibility in one move, and it is invisible unless you test for it.
+
+Full rubric, coverage table, and an honest list of what the suite cannot reach
+are in [`tests/README.md`](tests/README.md).
+
+---
+
 ## What this does *not* fix
 
 Being honest about the limits, since the whole point is honesty:
 
+- **The example transcript is invented.** [`session-transcript.md`](session-transcript.md) shows the format, nothing more. It is not a record of a real session, and there is no real graded transcript in this repo yet.
+- **The tests are thin and the rubric is mine.** [`tests/`](tests/) has a structural lint and ten behavioral fixtures graded by a second model, but the rubric encodes what I believe good behavior looks like, and an independent fixture set would be worth more than ten more of mine.
+- **Nothing tests the loop.** The central claim is that being graded on a commitment a week later changes what you do. No fixture can reach that, because the subject is a person and the interval is real time.
 - **It has no track record.** It can't tell you "I've seen forty teams try this, two made it." That knowledge isn't public and can't be written into a file.
 - **It has no stake in your company.** A YC partner's advice lands partly because they wrote you a check. This one didn't.
 - **You can delete the file.** The accountability loop only works if you don't cheat, and you can cheat in about two seconds. If you're going to do that, this won't help you and neither will anything else.

@@ -1,6 +1,13 @@
 # Example session
 
-A worked transcript showing the interrupt and the directive. Lightly edited.
+**This transcript is fabricated.** It was written to illustrate the shape of the
+interrupt and the directive. It is not a record of a real session. The founder,
+the company, the customers, and every number in it are invented.
+
+It is here because the format is easier to read than to describe. It is not
+evidence that the skill works, and it should not be read as any.
+
+A real graded transcript replaces this file the first time one exists.
 
 ---
 

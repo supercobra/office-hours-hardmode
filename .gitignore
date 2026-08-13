@@ -2,3 +2,5 @@
 *.jsonl
 node_modules/
 .env
+.gstack/
+tests/results/
