@@ -90,11 +90,20 @@ Read these before you trust the number.
 - **The judge is an LLM.** Judgments drift between runs and between model
   versions. `OH_REPEAT` exists because of this and does not eliminate it. A
   fixture that is green three times running can still be red on the fourth.
-- **The fixtures can be wrong, and one was.** F07 originally demanded a dated
-  directive from a session that legitimately ends at the interrupt's consent
-  beat, so the correct behavior failed the test. It passed on the first run and
-  failed on the second, and only the flakiness exposed it. Assume others like it
-  are still in here.
+- **The fixtures can be wrong, and two were.** There is one failure mode worth
+  naming because it bit twice. A session that carries a signal on the outranking
+  ladder can correctly be answered with an interrupt, and an interrupt ends its
+  turn at the consent beat with no directive in it. Any fixture that both plants
+  a ladder signal and demands a directive in the same turn will therefore fail
+  correct behavior, intermittently, which is the worst way to fail.
+
+  F07 hit it and was caught by a re-run. F06 hit it and survived two full suite
+  passes before `OH_REPEAT=3` caught it at 2 of 3. F08 was fixed by audit rather
+  than by failure.
+
+  **The rule:** a fixture that requires a directive must keep its session free of
+  ladder signals. A fixture that plants one must accept a consent-ended turn.
+  Test one thing.
 - **Ten fixtures is thin.** Rungs 6 (time bomb) and the two-declines path are
   not covered at all yet.
 - **Nothing here tests the loop across sessions.** The skill's central claim is
