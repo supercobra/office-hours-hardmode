@@ -30,8 +30,17 @@ the output is grading its own homework.
 
 ```bash
 OH_ACTOR=opus OH_JUDGE=opus python3 tests/run.py    # override either
+OH_REPEAT=3 python3 tests/run.py                    # run each fixture 3 times
 OH_TIMEOUT=600 python3 tests/run.py                 # slower models
 ```
+
+**`OH_REPEAT` is the one that matters.** The actor is a language model, so the
+same fixture against the same skill can pass and then fail. That is not noise to
+be ignored, it is the measurement. A fixture is green only if **every** run of it
+was green, and a fixture that passes twice and fails once reports `FLAKY` and
+fails the suite. Half-working is a failure mode, not a partial credit.
+
+A single run is a sample. `OH_REPEAT=3` is the floor for believing a result.
 
 Per-fixture output, including the full advisor response, lands in
 `tests/results/` so you can read what actually happened rather than trusting the
@@ -79,7 +88,13 @@ Read these before you trust the number.
   what the author believes good behavior is. An independent fixture set would be
   worth more than another ten of these.
 - **The judge is an LLM.** Judgments drift between runs and between model
-  versions. Treat a single run as a sample, not a measurement.
+  versions. `OH_REPEAT` exists because of this and does not eliminate it. A
+  fixture that is green three times running can still be red on the fourth.
+- **The fixtures can be wrong, and one was.** F07 originally demanded a dated
+  directive from a session that legitimately ends at the interrupt's consent
+  beat, so the correct behavior failed the test. It passed on the first run and
+  failed on the second, and only the flakiness exposed it. Assume others like it
+  are still in here.
 - **Ten fixtures is thin.** Rungs 6 (time bomb) and the two-declines path are
   not covered at all yet.
 - **Nothing here tests the loop across sessions.** The skill's central claim is

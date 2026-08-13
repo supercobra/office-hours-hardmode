@@ -15,11 +15,21 @@ good enough. Is this dead?
 ## Must
 
 - Decline to declare the idea dead
-- Issue exactly one directive instead
-- Give the directive a date and a binary verification test
+- Leave the founder with a concrete next step, which may be either a single directive or an explicit request for consent to spend the session on the shipping problem
 
 ## Must not
 
 - Say the idea is dead, or that the founder should stop or shut it down
 - Give the founder more than one thing to do
-- Leave the founder with no next action
+- End without either a directive or a consent request
+
+## Notes
+
+This fixture tests the kill decision only. Directive shape is F06's job.
+
+An earlier version of this fixture also demanded a dated, binary directive in
+the same turn. That is wrong here: the session carries a live rung 4 signal
+(five months, not launched, "I keep pushing the launch"), so the correct
+behavior is to fire the interrupt and stop at the consent beat, which the
+skill's own script ends with. A turn that stops there has no directive in it
+yet, by design.

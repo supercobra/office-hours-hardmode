@@ -31,6 +31,7 @@ RESULTS = ROOT / "tests" / "results"
 ACTOR = os.environ.get("OH_ACTOR", "sonnet")
 JUDGE = os.environ.get("OH_JUDGE", "opus")
 TIMEOUT = int(os.environ.get("OH_TIMEOUT", "300"))
+REPEAT = max(1, int(os.environ.get("OH_REPEAT", "1")))
 
 NO_TOOLS = [
     "--disallowed-tools",
@@ -178,49 +179,66 @@ def main():
         fx = parse_fixture(path)
         print(f"{DIM}running{OFF} {fx['id']} ... ", end="", flush=True)
 
-        output, err = run_actor(skill, fx)
-        if err or not output:
-            msg = err or "advisor returned nothing"
-            print(f"{RED}ERROR{OFF} {msg}")
+        attempts, errored = [], None
+        for _ in range(REPEAT):
+            output, err = run_actor(skill, fx)
+            if err or not output:
+                errored = err or "advisor returned nothing"
+                break
+            verdict, err = run_judge(fx, output)
+            if err or verdict is None:
+                errored = err or "judge returned nothing"
+                break
+
+            musts = verdict.get("must", [])
+            nots = verdict.get("must_not", [])
+            passed = sum(1 for m in musts if m.get("pass"))
+            violations = [n for n in nots if n.get("violated")]
+            score = passed / len(musts) if musts else 1.0
+            # A MUST NOT violation fails the run outright, whatever the score.
+            attempts.append({
+                "good": score >= fx["threshold"] and not violations,
+                "score": score, "passed": passed, "total": len(musts),
+                "violations": violations, "musts": musts,
+                "verdict": verdict, "output": output,
+            })
+
+        if errored:
+            print(f"{RED}ERROR{OFF} {errored}")
             failed += 1
-            rows.append((fx["id"], "ERROR", 0.0, msg))
+            rows.append((fx["id"], "ERROR", 0.0))
             continue
 
-        verdict, err = run_judge(fx, output)
-        if err or verdict is None:
-            msg = err or "judge returned nothing"
-            print(f"{RED}ERROR{OFF} {msg}")
-            failed += 1
-            rows.append((fx["id"], "ERROR", 0.0, msg))
-            continue
-
-        musts = verdict.get("must", [])
-        nots = verdict.get("must_not", [])
-        passed = sum(1 for m in musts if m.get("pass"))
-        violations = [n for n in nots if n.get("violated")]
-        score = passed / len(musts) if musts else 1.0
-
-        # A MUST NOT violation fails the fixture outright, whatever the score.
-        good = score >= fx["threshold"] and not violations
+        wins = sum(1 for a in attempts if a["good"])
+        # A fixture is only green if every run of it was green. Flaky is failing.
+        good = wins == len(attempts)
         if not good:
             failed += 1
 
+        last = attempts[-1]
+        mean = sum(a["score"] for a in attempts) / len(attempts)
         colour = GREEN if good else RED
-        label = "PASS" if good else "FAIL"
-        extra = f"  {RED}{len(violations)} violation(s){OFF}" if violations else ""
-        print(f"{colour}{label}{OFF}  {passed}/{len(musts)}{extra}")
+        label = "PASS" if good else ("FLAKY" if wins else "FAIL")
+        runs = f"  {DIM}{wins}/{len(attempts)} runs{OFF}" if REPEAT > 1 else ""
+        print(f"{colour}{label}{OFF}  {last['passed']}/{last['total']}{runs}")
 
-        for m in musts:
-            if not m.get("pass"):
-                print(f"    {YELLOW}missed{OFF} {m.get('c','')} {DIM}({m.get('why','')}){OFF}")
-        for n in violations:
-            print(f"    {RED}violated{OFF} {n.get('c','')} {DIM}({n.get('why','')}){OFF}")
+        for a in attempts:
+            if a["good"]:
+                continue
+            for m in a["musts"]:
+                if not m.get("pass"):
+                    print(f"    {YELLOW}missed{OFF} {m.get('c','')} {DIM}({m.get('why','')}){OFF}")
+            for n in a["violations"]:
+                print(f"    {RED}violated{OFF} {n.get('c','')} {DIM}({n.get('why','')}){OFF}")
 
-        rows.append((fx["id"], label, score, ""))
+        rows.append((fx["id"], label, mean))
         (RESULTS / f"{fx['id']}.json").write_text(
             json.dumps(
                 {"id": fx["id"], "actor": ACTOR, "judge": JUDGE,
-                 "score": score, "verdict": verdict, "output": output},
+                 "repeat": REPEAT, "runs_green": wins, "mean_score": mean,
+                 "attempts": [{"score": a["score"], "good": a["good"],
+                               "verdict": a["verdict"], "output": a["output"]}
+                              for a in attempts]},
                 indent=2,
             )
         )
@@ -228,7 +246,9 @@ def main():
     scored = [r[2] for r in rows if r[1] != "ERROR"]
     mean = sum(scored) / len(scored) if scored else 0.0
     print(f"\n{len(rows) - failed}/{len(rows)} fixtures passed")
-    print(f"rubric score: {mean:.2f}  (actor={ACTOR}, judge={JUDGE})")
+    print(f"rubric score: {mean:.2f}  (actor={ACTOR}, judge={JUDGE}, repeat={REPEAT})")
+    if REPEAT == 1:
+        print(f"{DIM}one run is a sample, not a measurement. OH_REPEAT=3 for a real signal.{OFF}")
     print(f"{DIM}per-fixture detail in tests/results/{OFF}")
     return 1 if failed else 0
 
