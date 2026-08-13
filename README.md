@@ -1,5 +1,7 @@
 # office-hours-hardmode
 
+YC office-hours gstack hardmode: The two things I think don't survive the distillation (Garry Tan mentionned that /office-hours is distilled 90%, so real YC office hours keeps its edge, see below) are the partner taking the session away from you, and seeing you again in two weeks.
+
 A Claude Code skill that lets your AI advisor **interrupt you** and **give you one order with a deadline** — the two things real startup office hours do that AI advice normally doesn't.
 
 Built on top of the `/office-hours` skill from [**gstack**](https://github.com/garrytan/gstack), open-sourced by **Garry Tan**, president and CEO of **Y Combinator**. His skill distills the YC office-hours format into a set of forcing questions. This one adds back two things the text file couldn't carry.
@@ -70,11 +72,11 @@ It's never allowed to kill something with paying customers. And when it does say
 
 ## Why
 
-**Y Combinator office hours** are twenty minutes with a group partner, roughly every two weeks, for the length of the batch. They're widely considered the most valuable part of YC — more than the money, more than Demo Day. They work because of things that aren't in the advice.
+**Y Combinator office hours** are twenty minutes with a group partner, roughly every two weeks, for the length of the batch. They're widely considered the most valuable part of YC, more than the money, more than Demo Day. They work because of things that aren't in the advice.
 
 The partner has seen thousands of companies, so they know the base rate. They have money in your company, so you can't just ignore them. They see you again in two weeks, so the thing you promised is real. And they'll cut you off in the first ninety seconds, because they've already spotted the actual problem and it isn't the one you booked the meeting about.
 
-When you turn that into a text file, almost all of it evaporates. Garry Tan — who runs YC and has sat on the partner side of thousands of these — open-sourced his own distilled version in gstack, and put the loss at [about 90% of the power](https://x.com/garrytan/status/2052836328862277805).
+When you turn that into a text file, almost all of it evaporates. Garry Tan, who runs YC and has sat on the partner side of thousands of these, open-sourced his own distilled version in gstack, and put the loss at [about 90% of the power](https://x.com/garrytan/status/2052836328862277805).
 
 Most of that loss is unrecoverable in software. You can't give an AI a decade of pattern-matched priors, and you can't give it equity in your company.
 
@@ -83,7 +85,7 @@ But two of the missing pieces are just **permissions and memory**:
 1. Advisors interrupt. AI is trained to be helpful, and being helpful means answering what you asked. That's a rule you can change.
 2. Advisors commit you to one thing and then check. That's a text file with a date in it.
 
-That's the whole idea here. Not a smarter model — a rude one with a calendar.
+That's the whole idea here. Not a smarter model, a rude one with a calendar.
 
 ---
 
@@ -102,7 +104,7 @@ If you happen to have gstack, the skill stores its commitments alongside your ot
 ### Install (30 seconds)
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/office-hours-hardmode.git \
+git clone https://github.com/supercobra/office-hours-hardmode.git \
   ~/.claude/skills/office-hours-hardmode
 ```
 
@@ -175,7 +177,7 @@ Open an issue with the transcript (redact freely) and what it should have done i
 
 ## Acknowledgements
 
-**Garry Tan** and **[gstack](https://github.com/garrytan/gstack)** — this exists because Garry open-sourced his Claude Code setup, including an `/office-hours` skill that distills the YC format into six forcing questions and a set of anti-sycophancy rules. That skill is the substance. Everything good about the questions here is his. He also did the honest thing and said out loud that the distilled version loses most of its power, which is what made it obvious what to try to add back.
+**Garry Tan** and **[gstack](https://github.com/garrytan/gstack)** - this exists because Garry open-sourced his Claude Code setup, including an `/office-hours` skill that distills the YC format into six forcing questions and a set of anti-sycophancy rules. That skill is the substance. Everything good about the questions here is his. He also did the honest thing and said out loud that the distilled version loses most of its power, which is what made it obvious what to try to add back.
 
 **Y Combinator** — the office-hours format itself. Twenty minutes, one partner, no slides, and a willingness to tell founders things they didn't want to hear. Everything in this repo is an attempt to imitate a meeting YC has been running since 2005.
 
